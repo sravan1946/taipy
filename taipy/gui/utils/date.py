@@ -24,13 +24,23 @@ def _date_to_string(date_val: t.Union[datetime, date, time]) -> str:
         # return date.isoformat() + 'Z', if possible
         try:
             if date_val.tzinfo is None:
-                return date_val.isoformat()
-            return date_val.astimezone(utc).isoformat()
+                return date_val.isoformat() + "Z"
+            return date_val.astimezone(utc).isoformat() + "Z"
         except Exception as e:
             # astimezone() fails on Windows for pre-epoch times
             # See https://bugs.python.org/issue36759
             _warn("Exception raised converting date to ISO 8601", e)
-    return date_val.isoformat()
+    return date_val.isoformat() if isinstance(date_val, date) else date_val.strftime("%H:%M:%S")
+
+    #     try:
+    #         if date_val.tzinfo is None:
+    #             return date_val.isoformat()
+    #         return date_val.astimezone(utc).isoformat()
+    #     except Exception as e:
+    #         # astimezone() fails on Windows for pre-epoch times
+    #         # See https://bugs.python.org/issue36759
+    #         _warn("Exception raised converting date to ISO 8601", e)
+    # return date_val.isoformat()
 
 
 def _string_to_date(date_str: str) -> t.Union[datetime, date]:
